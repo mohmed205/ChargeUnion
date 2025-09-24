@@ -40,3 +40,4 @@
 > الإصدار: 1.4 — سبتمبر 2025  
 > المطوّر: فريق Charge Union  
 > المحفظة الرسمية: `GBHXBLVEZT4ZIXTFO43OWP24FK6GW5BKV54GQDWOGCQ2GIEE2AELC447`
+📜 [الوثيقة الرسمية للإصدار 1.4](docs/ChargeUnion_1.4_Official.md)
