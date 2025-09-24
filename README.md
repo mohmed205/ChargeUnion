@@ -41,3 +41,15 @@
 > المطوّر: فريق Charge Union  
 > المحفظة الرسمية: `GBHXBLVEZT4ZIXTFO43OWP24FK6GW5BKV54GQDWOGCQ2GIEE2AELC447`
 📜 [الوثيقة الرسمية للإصدار 1.4](docs/ChargeUnion_1.4_Official.md)
+- [الوثيقة الرسمية للإصدار 1.4](docs/ChargeUnion_1.4_Official.md)
+- [الطقوس الرمزية](docs/rituals.md)
+- [خطة التوسّع](docs/expansion_plan.md)
+- [تكامل API](docs/api_integration.md)
+- [دليل الترجمة](docs/translation_guide.md)
+- [نموذج الربح](docs/monetization_model.md)
+- [الخصوصية والحماية](docs/privacy_and_security.md)
+- [الشراكات المحتملة](docs/partnerships.md)
+- [ربط التطبيق بالسيارة والشواحن الذكية](docs/device_integration.md)
+- [خريطة الطقوس الرمزية](docs/symbolic_map.md)
+- [واجهة المستخدم المقترحة](docs/ui_design.md)
+- [استراتيجية الانتشار العالمي](docs/global_strategy.md)
