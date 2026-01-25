@@ -1,34 +1,68 @@
-> يُفتح من متصفح سطح المكتب، ويُربط بحساب Pi عبر رمز تحقق.
 
----
-
-## 🛠️ خطوات التشغيل – خطوة بخطوة
-
-### 1. إنشاء ملف `index.html`
-
-```html
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Charge Union Test</title>
+    <meta charset="UTF-8">
+    <title>Charger Union</title>
+    <!-- استدعاء مكتبة Pi SDK -->
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   </head>
   <body>
-    <h2>Charge Union - Sandbox Mode</h2>
+    <h2>Charger Union - Sandbox Mode</h2>
+
+    <!-- زر تسجيل الدخول -->
     <button onclick="login()">Login with Pi</button>
+    <br><br>
+
+    <!-- زر دفع تجريبي -->
+    <button onclick="makePayment()">Test Payment</button>
+
     <script>
+      // تفعيل Pi SDK في وضع Sandbox (تجريبي)
       Pi.init({ sandbox: true });
 
+      // دالة تسجيل الدخول
       async function login() {
         const scopes = ['username', 'payments'];
         try {
           const user = await Pi.authenticate(scopes, onIncompletePaymentFound);
           alert("Welcome " + user.username);
         } catch (error) {
-          console.error(error);
+          console.error("Login failed:", error);
         }
       }
 
+      // دالة دفع تجريبي
+      async function makePayment() {
+        try {
+          const paymentData = {
+            amount: 1, // قيمة تجريبية
+            memo: "Test payment for Charger Union",
+            metadata: { test: true }
+          };
+
+          const payment = await Pi.createPayment(paymentData, {
+            onReadyForServerApproval: payment => {
+              console.log("Ready for server approval:", payment);
+            },
+            onReadyForServerCompletion: payment => {
+              console.log("Ready for server completion:", payment);
+            },
+            onCancel: payment => {
+              console.log("Payment cancelled:", payment);
+            },
+            onError: error => {
+              console.error("Payment error:", error);
+            }
+          });
+
+          console.log("Payment created:", payment);
+        } catch (error) {
+          console.error("Payment failed:", error);
+        }
+      }
+
+      // التعامل مع دفعات غير مكتملة
       function onIncompletePaymentFound(payment) {
         console.log('Incomplete payment:', payment);
       }
