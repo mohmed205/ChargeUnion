@@ -3,24 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charger Union - Pi Network</title>
+    <title>Charger Union ⚡</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="container">
-        <h1>Charger Union ⚡</h1>
-        <p id="status-text">مرحباً بك في وضع الاختبار (Sandbox)</p>
-
-        <div class="user-info" id="user-info" style="display: none;">
-            <p>أهلاً بك: <span id="username"></span></p>
+        <div class="header">
+            <span class="bolt">⚡</span>
+            <h1>Charger Union</h1>
+        </div>
+        
+        <p id="status-text">وضع الاختبار (Sandbox Mode)</p>
+        
+        <div id="user-info" class="user-card" style="display: none;">
+            <p>أهلاً بك يا بطل: <br><strong id="username"></strong></p>
         </div>
 
         <button onclick="login()" id="login-btn">تسجيل الدخول عبر Pi 🔑</button>
-        <button onclick="makePayment()" id="pay-btn" style="display: none;">تجربة عملية دفع 💳</button>
+        <button onclick="makePayment()" id="pay-btn" style="display: none;">تجربة دفع 1 Pi 💳</button>
+        
+        <div class="footer">
+            <p>المطور: محمد عمار</p>
+        </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
