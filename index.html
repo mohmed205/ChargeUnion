@@ -5,74 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Charger Union - Pi Network</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background-color: #f4f4f9;
-        }
-        button {
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #673ab7;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            margin: 10px;
-        }
-        button:hover {
-            background-color: #512da8;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Charger Union ⚡</h1>
-    <p>مرحباً بك في وضع الاختبار (Sandbox Mode)</p>
+    <div class="container">
+        <h1>Charger Union ⚡</h1>
+        <p id="status-text">مرحباً بك في وضع الاختبار (Sandbox)</p>
 
-    <button onclick="login()">تسجيل الدخول عبر Pi 🔑</button>
-    <br>
-    <button onclick="makePayment()">تجربة عملية دفع 💳</button>
+        <div class="user-info" id="user-info" style="display: none;">
+            <p>أهلاً بك: <span id="username"></span></p>
+        </div>
 
-    <script>
-      // التعديل 1: يجب تحديد الإصدار في Pi.init ليعمل بشكل صحيح
-      Pi.init({ version: "2.0", sandbox: true });
+        <button onclick="login()" id="login-btn">تسجيل الدخول عبر Pi 🔑</button>
+        <button onclick="makePayment()" id="pay-btn" style="display: none;">تجربة عملية دفع 💳</button>
+    </div>
 
-      async function login() {
-        // التعديل 2: Scopes يجب أن تكون مطابقة لما تم تفعيله في Developer Portal
-        const scopes = ['username', 'payments']; 
-        
-        try {
-          // التعديل 3: استخدام await مع Pi.authenticate
-          const user = await Pi.authenticate(scopes, onIncompletePaymentFound);
-          alert("أهلاً بك يا " + user.username);
-          console.log("User Data:", user);
-        } catch (error) {
-          console.error("فشل تسجيل الدخول:", error);
-          // لإظهار سبب الخطأ الحقيقي في التنبيه
-          alert("حدث خطأ أثناء تسجيل الدخول: " + (error.message || "تأكد من استخدام Pi Browser"));
-        }
-      }
-
-      // دالة التعامل مع المدفوعات غير المكتملة (إجبارية للـ SDK)
-      function onIncompletePaymentFound(payment) {
-        console.log('هناك عملية دفع غير مكتملة:', payment);
-      };
-
-      async function makePayment() {
-        try {
-          const paymentData = {
-            amount: 1, 
-            memo: "Test payment for Charger Union",
-            metadata: { test: true }
-          };
-
-          const callback = {
-            onReadyForServerApproval: (paymentId) => {
-              console.log("بانتظار موافقة السيرفر:", paymentId);
-            },
-            onReadyForServerCompletion: (paymentId) => {
-              console.log("بانتظار إتمام العملية من السيرفر:", payment
-                          
+    <script src="script.js"></script>
+</body>
+</html>
