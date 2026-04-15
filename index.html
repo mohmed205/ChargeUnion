@@ -1,71 +1,86 @@
-
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="ar" dir="rtl">
+<head>
     <meta charset="UTF-8">
-    <title>Charger Union</title>
-    <!-- استدعاء مكتبة Pi SDK -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charger Union - Pi Network</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-  </head>
-  <body>
-    <h2>Charger Union - Sandbox Mode</h2>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f4f4f9;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #673ab7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #512da8;
+        }
+    </style>
+</head>
+<body>
 
-    <!-- زر تسجيل الدخول -->
-    <button onclick="login()">Login with Pi</button>
-    <br><br>
+    <h1>Charger Union ⚡</h1>
+    <p>مرحباً بك في وضع الاختبار (Sandbox Mode)</p>
 
-    <!-- زر دفع تجريبي -->
-    <button onclick="makePayment()">Test Payment</button>
+    <button onclick="login()">تسجيل الدخول عبر Pi 🔑</button>
+    <br>
+    <button onclick="makePayment()">تجربة عملية دفع 💳</button>
 
     <script>
-      // تفعيل Pi SDK في وضع Sandbox (تجريبي)
+      // تهيئة Pi SDK في وضع Sandbox
       Pi.init({ sandbox: true });
 
-      // دالة تسجيل الدخول
       async function login() {
         const scopes = ['username', 'payments'];
         try {
           const user = await Pi.authenticate(scopes, onIncompletePaymentFound);
-          alert("Welcome " + user.username);
+          alert("أهلاً بك يا " + user.username);
         } catch (error) {
-          console.error("Login failed:", error);
+          console.error("فشل تسجيل الدخول:", error);
+          alert("حدث خطأ أثناء تسجيل الدخول");
         }
       }
 
-      // دالة دفع تجريبي
       async function makePayment() {
         try {
           const paymentData = {
-            amount: 1, // قيمة تجريبية
+            amount: 1, 
             memo: "Test payment for Charger Union",
             metadata: { test: true }
           };
 
           const payment = await Pi.createPayment(paymentData, {
-            onReadyForServerApproval: payment => {
-              console.log("Ready for server approval:", payment);
+            onReadyForServerApproval: paymentId => {
+              console.log("بانتظار موافقة السيرفر:", paymentId);
             },
-            onReadyForServerCompletion: payment => {
-              console.log("Ready for server completion:", payment);
+            onReadyForServerCompletion: paymentId => {
+              console.log("بانتظار إتمام العملية من السيرفر:", paymentId);
             },
-            onCancel: payment => {
-              console.log("Payment cancelled:", payment);
+            onCancel: paymentId => {
+              console.log("تم إلغاء الدفع:", paymentId);
             },
-            onError: error => {
-              console.error("Payment error:", error);
+            onError: (error, payment) => {
+              console.error("خطأ في الدفع:", error);
             }
           });
-
-          console.log("Payment created:", payment);
         } catch (error) {
-          console.error("Payment failed:", error);
+          console.error("فشلت العملية:", error);
         }
       }
 
-      // التعامل مع دفعات غير مكتملة
       function onIncompletePaymentFound(payment) {
-        console.log('Incomplete payment:', payment);
+        console.log('هناك عملية دفع غير مكتملة:', payment);
       }
     </script>
-  </body>
+</body>
 </html>
