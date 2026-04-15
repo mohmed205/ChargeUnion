@@ -37,19 +37,29 @@
     <button onclick="makePayment()">تجربة عملية دفع 💳</button>
 
     <script>
-      // تهيئة Pi SDK في وضع Sandbox
-      Pi.init({ sandbox: true });
+      // التعديل 1: يجب تحديد الإصدار في Pi.init ليعمل بشكل صحيح
+      Pi.init({ version: "2.0", sandbox: true });
 
       async function login() {
-        const scopes = ['username', 'payments'];
+        // التعديل 2: Scopes يجب أن تكون مطابقة لما تم تفعيله في Developer Portal
+        const scopes = ['username', 'payments']; 
+        
         try {
+          // التعديل 3: استخدام await مع Pi.authenticate
           const user = await Pi.authenticate(scopes, onIncompletePaymentFound);
           alert("أهلاً بك يا " + user.username);
+          console.log("User Data:", user);
         } catch (error) {
           console.error("فشل تسجيل الدخول:", error);
-          alert("حدث خطأ أثناء تسجيل الدخول");
+          // لإظهار سبب الخطأ الحقيقي في التنبيه
+          alert("حدث خطأ أثناء تسجيل الدخول: " + (error.message || "تأكد من استخدام Pi Browser"));
         }
       }
+
+      // دالة التعامل مع المدفوعات غير المكتملة (إجبارية للـ SDK)
+      function onIncompletePaymentFound(payment) {
+        console.log('هناك عملية دفع غير مكتملة:', payment);
+      };
 
       async function makePayment() {
         try {
@@ -59,28 +69,10 @@
             metadata: { test: true }
           };
 
-          const payment = await Pi.createPayment(paymentData, {
-            onReadyForServerApproval: paymentId => {
+          const callback = {
+            onReadyForServerApproval: (paymentId) => {
               console.log("بانتظار موافقة السيرفر:", paymentId);
             },
-            onReadyForServerCompletion: paymentId => {
-              console.log("بانتظار إتمام العملية من السيرفر:", paymentId);
-            },
-            onCancel: paymentId => {
-              console.log("تم إلغاء الدفع:", paymentId);
-            },
-            onError: (error, payment) => {
-              console.error("خطأ في الدفع:", error);
-            }
-          });
-        } catch (error) {
-          console.error("فشلت العملية:", error);
-        }
-      }
-
-      function onIncompletePaymentFound(payment) {
-        console.log('هناك عملية دفع غير مكتملة:', payment);
-      }
-    </script>
-</body>
-</html>
+            onReadyForServerCompletion: (paymentId) => {
+              console.log("بانتظار إتمام العملية من السيرفر:", payment
+                          
