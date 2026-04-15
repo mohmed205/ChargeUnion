@@ -5,46 +5,43 @@ Pi.init({ version: "2.0", sandbox: true });
 async function login() {
     const scopes = ['username', 'payments'];
     try {
-        const user = await Pi.authenticate(scopes, onIncompletePaymentFound);
+        // المصادقة مع الشبكة
+        const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
         
-        // تحديث الواجهة بعد نجاح الدخول
-        document.getElementById('username').innerText = user.username;
+        // إصلاح مشكلة undefined باستخراج الاسم بشكل صحيح
+        const userDisplayName = auth.user.username;
+        
+        // تحديث واجهة التطبيق
+        document.getElementById('username').innerText = "@" + userDisplayName;
         document.getElementById('user-info').style.display = 'block';
         document.getElementById('login-btn').style.display = 'none';
         document.getElementById('pay-btn').style.display = 'block';
-        document.getElementById('status-text').innerText = "تم تسجيل الدخول بنجاح";
+        document.getElementById('status-text').innerText = "تم الاتصال بنجاح ✅";
         
-        console.log("بيانات المستخدم:", user);
+        console.log("مرحباً بك يا عمار:", userDisplayName);
     } catch (error) {
-        console.error(error);
-        alert("فشل تسجيل الدخول: " + error.message);
+        console.error("خطأ:", error);
+        alert("فشل تسجيل الدخول. تأكد من فتح الرابط داخل Pi Browser");
     }
 }
 
 async function makePayment() {
     try {
         const paymentData = {
-            amount: 1, // جرب تغيير المبلغ هنا إذا أردت
-            memo: "تجربة دفع في Charger Union",
-            metadata: { test: true }
+            amount: 1,
+            memo: "شحن رصيد Charger Union",
+            metadata: { user: "mohmed205" }
         };
 
         const callbacks = {
             onReadyForServerApproval: (paymentId) => {
-                console.log("تمت موافقة المستخدم، رقم العملية:", paymentId);
-                // هذه الرسالة ستؤكد لك أن الكود سليم قبل أن تظهر رسالة "الانتهاء"
-                alert("تم إرسال الطلب بنجاح! رقم العملية: " + paymentId);
+                alert("تم إرسال الطلب للمحفظة! رقم العملية: " + paymentId);
             },
             onReadyForServerCompletion: (paymentId) => {
-                console.log("العملية تنتظر الإتمام النهائي:", paymentId);
+                console.log("بانتظار التأكيد النهائي...");
             },
-            onCancel: (paymentId) => {
-                console.log("تم إلغاء الدفع من قبل المستخدم");
-            },
-            onError: (error, payment) => {
-                console.error("خطأ أثناء الدفع:", error);
-                alert("حدث خطأ في عملية الدفع.");
-            }
+            onCancel: (paymentId) => console.log("تم إلغاء الدفع"),
+            onError: (error) => console.error("خطأ في الدفع:", error)
         };
 
         await Pi.createPayment(paymentData, callbacks);
@@ -54,6 +51,5 @@ async function makePayment() {
 }
 
 function onIncompletePaymentFound(payment) {
-    console.log("تم العثور على دفعة لم تكتمل سابقاً:", payment);
-    // يمكنك هنا إخبار المستخدم أن لديه عملية معلقة
-            }
+    console.log("هناك عملية معلقة:", payment);
+}
