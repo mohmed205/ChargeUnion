@@ -8,7 +8,7 @@ async function login() {
         // المصادقة مع الشبكة
         const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
         
-        // إصلاح مشكلة undefined باستخراج الاسم بشكل صحيح
+        // استخراج اسم المستخدم
         const userDisplayName = auth.user.username;
         
         // تحديث واجهة التطبيق
@@ -18,7 +18,7 @@ async function login() {
         document.getElementById('pay-btn').style.display = 'block';
         document.getElementById('status-text').innerText = "تم الاتصال بنجاح ✅";
         
-        console.log("مرحباً بك يا عمار:", userDisplayName);
+        console.log("مرحباً بك:", userDisplayName);
     } catch (error) {
         console.error("خطأ:", error);
         alert("فشل تسجيل الدخول. تأكد من فتح الرابط داخل Pi Browser");
@@ -34,22 +34,52 @@ async function makePayment() {
         };
 
         const callbacks = {
-            onReadyForServerApproval: (paymentId) => {
-                alert("تم إرسال الطلب للمحفظة! رقم العملية: " + paymentId);
+            onReadyForServerApproval: async (paymentId) => {
+                console.log("إرسال رقم العملية للموافقة إلى Render:", paymentId);
+                
+                // رابط خادمك الجديد على Render
+                const serverUrl = "https://mohmed205-github-io.onrender.com/approve-payment";
+
+                try {
+                    const response = await fetch(serverUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ paymentId: paymentId })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        console.log("وافق الخادم بنجاح:", result);
+                        // إخبار الـ SDK بأن السيرفر وافق
+                        return Pi.payment.complete(paymentId);
+                    } else {
+                        console.error("فشل الخادم في الموافقة");
+                    }
+                } catch (error) {
+                    console.error("خطأ في الاتصال بالخادم:", error);
+                }
             },
-            onReadyForServerCompletion: (paymentId) => {
-                console.log("بانتظار التأكيد النهائي...");
+            onReadyForServerCompletion: (paymentId, txid) => {
+                console.log("العملية اكتملت بنجاح! TXID:", txid);
+                alert("تمت العملية بنجاح! شكرًا لك.");
             },
-            onCancel: (paymentId) => console.log("تم إلغاء الدفع"),
-            onError: (error) => console.error("خطأ في الدفع:", error)
+            onCancel: (paymentId) => {
+                console.log("تم إلغاء الدفع من قبل المستخدم");
+            },
+            onError: (error, payment) => {
+                console.error("خطأ في الدفع:", error);
+                alert("حدث خطأ أثناء الدفع، حاول مرة أخرى.");
+            }
         };
 
         await Pi.createPayment(paymentData, callbacks);
     } catch (error) {
-        console.error(error);
+        console.error("خطأ في إنشاء عملية الدفع:", error);
     }
 }
 
 function onIncompletePaymentFound(payment) {
-    console.log("هناك عملية معلقة:", payment);
+    console.log("هناك عملية معلقة يجب معالجتها:", payment);
+    // يمكنك هنا استدعاء خادمك لإكمال العملية إذا كانت معلقة
 }
