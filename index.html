@@ -21,7 +21,12 @@
         </div>
 
         <button onclick="login()" id="login-btn">تسجيل الدخول عبر Pi 🔑</button>
-        <button onclick="makePayment()" id="pay-btn" style="display: none;">تجربة دفع 1 Pi 💳</button>
+        
+        <div id="action-buttons" style="display: flex; flex-direction: column; gap: 10px;">
+            <button onclick="makePayment()" id="pay-btn" style="display: none;">تجربة دفع 1 Pi 💳</button>
+            
+            <button onclick="startSubscription()" id="sub-btn" style="display: none; background: #ffa500; color: white;">تفعيل اشتراك شهري (PiRC2) 🚀</button>
+        </div>
 
         <div class="services" style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div style="background: #fff; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
