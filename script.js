@@ -1,53 +1,63 @@
-// تهيئة Pi SDK
+// 1. تهيئة Pi SDK
 const Pi = window.Pi;
 Pi.init({ version: "2.0", sandbox: true });
 
-// عنوان العقد الذكي للاشتراكات (من صورك)
-const SUBSCRIPTION_CONTRACT_ID = "CCUF75B6W3HRTJD6O7OXNI72HGJ7DERZ5MUNOMFMSK23ME5GUIKPFYV";
+// 2. إعدادات السيرفر والدومين
+const SERVER_URL = "https://mohmed205-github-io.onrender.com"; // رابط سيرفر Render الخاص بك
 
 async function login() {
-    const scopes = ['username', 'payments', 'subscriptions']; // أضفنا صلاحية الاشتراكات
+    // تحديد الصلاحيات المطلوبة (حل مشكلة هاتف زوجتك)
+    const scopes = ['username', 'payments', 'wallet_address']; 
+    
     try {
         const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
-        const userDisplayName = auth.user.username;
         
-        document.getElementById('username').innerText = "@" + userDisplayName;
+        // تحديث الواجهة عند نجاح الدخول
+        document.getElementById('username').innerText = "@" + auth.user.username;
         document.getElementById('user-info').style.display = 'block';
         document.getElementById('login-btn').style.display = 'none';
         
-        // إظهار أزرار الدفع والاشتراك
+        // إظهار أزرار العمليات
         document.getElementById('pay-btn').style.display = 'block';
-        document.getElementById('sub-btn').style.display = 'block'; 
+        document.getElementById('sub-btn').style.display = 'block';
         
         document.getElementById('status-text').innerText = "تم الاتصال بنجاح ✅";
     } catch (error) {
-        console.error("خطأ:", error);
-        alert("فشل تسجيل الدخول. تأكد من فتح الرابط داخل Pi Browser");
+        console.error("Login Error:", error);
+        alert("تأكد من فتح الرابط داخل متصفح Pi Browser");
     }
 }
 
-// --- دالة الاشتراك الجديدة (أول ربط للمرحلة العاشرة) ---
-async function startSubscription() {
+// 3. دالة معالجة الدفع (لإتمام الخطوة العاشرة)
+async function makePayment() {
     try {
         const paymentData = {
-            amount: 0.5, // مبلغ بسيط للاشتراك التجريبي
-            memo: "تفعيل اشتراك Charge Union الدوري",
-            metadata: { 
-                contract_address: SUBSCRIPTION_CONTRACT_ID,
-                type: "subscription_init" 
-            }
+            amount: 0.001, // مبلغ بسيط جداً للاختبار
+            memo: "اختبار الخطوة العاشرة لـ Charger Union",
+            metadata: { orderId: "12345", type: "test_payment" }
         };
 
         const callbacks = {
             onReadyForServerApproval: async (paymentId) => {
-                return handleServerApproval(paymentId); // نستخدم نفس دالة الموافقة
+                // إرسال الطلب لسيرفر Render للموافقة
+                const response = await fetch(`${SERVER_URL}/approve-payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paymentId })
+                });
+                return response.ok;
             },
-            onReadyForServerCompletion: (paymentId, txid) => {
-                console.log("تم تفعيل الاشتراك بنجاح! TXID:", txid);
-                alert("تم تفعيل نظام الاشتراك ✅ - هذا سيساعد في المرحلة العاشرة!");
+            onReadyForServerCompletion: async (paymentId, txid) => {
+                // إرسال الـ TXID للسيرفر لإكمال العملية
+                await fetch(`${SERVER_URL}/complete-payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paymentId, txid })
+                });
+                alert("تمت العملية بنجاح! تفقد لوحة التحكم الآن ✅");
             },
-            onCancel: (paymentId) => console.log("تم الإلغاء"),
-            onError: (error) => alert("خطأ في الاشتراك، تأكد أن السيرفر Live")
+            onCancel: (paymentId) => console.log("تم إلغاء الدفع"),
+            onError: (error, payment) => console.error("خطأ في الدفع:", error)
         };
 
         await Pi.createPayment(paymentData, callbacks);
@@ -56,28 +66,7 @@ async function startSubscription() {
     }
 }
 
-// دالة مشتركة للموافقة عبر Render
-async function handleServerApproval(paymentId) {
-    const serverUrl = "https://mohmed205-github-io.onrender.com/approve-payment";
-    try {
-        const response = await fetch(serverUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ paymentId: paymentId })
-        });
-        if (response.ok) {
-            return Pi.payment.complete(paymentId);
-        }
-    } catch (error) {
-        console.error("السيرفر لا يستجيب:", error);
-    }
-}
-
-// دالة الدفع العادي (التي كتبتها أنت)
-async function makePayment() {
-    // ... (نفس الكود الذي كتبته أنت أعلاه)
-}
-
+// دالة معالجة العمليات غير المكتملة
 function onIncompletePaymentFound(payment) {
-    console.log("عملية معلقة:", payment);
+    console.log("وجدت عملية معلقة:", payment);
 }
