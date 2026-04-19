@@ -2,11 +2,11 @@
 const Pi = window.Pi;
 Pi.init({ version: "2.0", sandbox: true });
 
-// 2. إعدادات السيرفر والدومين
-const SERVER_URL = "https://mohmed205-github-io.onrender.com"; // رابط سيرفر Render الخاص بك
+// 2. إعدادات السيرفر والدومين (تم التحديث للرابط الجديد -3)
+const SERVER_URL = "https://mohmed205-github-io-3.onrender.com"; 
 
 async function login() {
-    // تحديد الصلاحيات المطلوبة (حل مشكلة هاتف زوجتك)
+    // تحديد الصلاحيات المطلوبة
     const scopes = ['username', 'payments', 'wallet_address']; 
     
     try {
@@ -39,7 +39,7 @@ async function makePayment() {
 
         const callbacks = {
             onReadyForServerApproval: async (paymentId) => {
-                // إرسال الطلب لسيرفر Render للموافقة
+                // إرسال الطلب لسيرفر Render للموافقة (Approve)
                 const response = await fetch(`${SERVER_URL}/approve-payment`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -48,7 +48,7 @@ async function makePayment() {
                 return response.ok;
             },
             onReadyForServerCompletion: async (paymentId, txid) => {
-                // إرسال الـ TXID للسيرفر لإكمال العملية
+                // إرسال الـ TXID للسيرفر لإكمال العملية (Complete)
                 await fetch(`${SERVER_URL}/complete-payment`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
