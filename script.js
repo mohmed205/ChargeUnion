@@ -2,8 +2,8 @@
 const Pi = window.Pi;
 Pi.init({ version: "2.0", sandbox: true });
 
-// 2. إعدادات السيرفر - تأكد أن هذا رابط Render الصحيح
-const SERVER_URL = "https://mohmed205-github-io-3.onrender.com"; 
+// 2. إعدادات السيرفر - الرابط الجديد الصح
+const SERVER_URL = "https://charge-union-backend.onrender.com";
 
 async function login() {
     const scopes = ['username', 'payments', 'wallet_address']; 
@@ -23,7 +23,7 @@ async function login() {
     }
 }
 
-// 3. دالة معالجة الدفع - مصححة
+// 3. دالة معالجة الدفع
 async function makePayment() {
     try {
         const paymentData = {
@@ -33,7 +33,6 @@ async function makePayment() {
         };
 
         const callbacks = {
-            // عدلت المسار هنا من /approve-payment إلى /payments/approve
             onReadyForServerApproval: async (paymentId) => {
                 const response = await fetch(`${SERVER_URL}/payments/approve`, {
                     method: 'POST',
@@ -43,7 +42,6 @@ async function makePayment() {
                 if (!response.ok) throw new Error('Approve failed');
             },
             
-            // عدلت المسار هنا من /complete-payment إلى /payments/complete
             onReadyForServerCompletion: async (paymentId, txid) => {
                 const response = await fetch(`${SERVER_URL}/payments/complete`, {
                     method: 'POST',
@@ -67,10 +65,9 @@ async function makePayment() {
     }
 }
 
-// 4. دالة معالجة العمليات غير المكتملة - مصححة
+// 4. دالة معالجة العمليات غير المكتملة
 function onIncompletePaymentFound(payment) {
     console.log("وجدت عملية معلقة:", payment);
-    // لازم ترجع promise عشان الـ SDK يكمل
     return fetch(`${SERVER_URL}/payments/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -81,7 +78,7 @@ function onIncompletePaymentFound(payment) {
     });
 }
 
-// 5. دالة الاشتراك - ضيفها لو تبيها
+// 5. دالة الاشتراك
 async function startSubscription() {
     try {
         const paymentData = {
