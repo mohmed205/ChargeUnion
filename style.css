@@ -4,40 +4,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
+    padding: 15px; /* هذه الإضافة */
+    box-sizing: border-box; /* وهذي */
 }
-.container {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    text-align: center;
-    width: 320px;
-}
-.header .bolt { font-size: 60px; color: #ffca28; }
-h1 { color: #673ab7; margin: 10px 0; }
-#status-text { color: #666; font-size: 14px; }
-.user-card {
-    background: #f3e5f5;
-    padding: 15px;
-    border-radius: 12px;
-    margin: 20px 0;
-    border: 1px dashed #7b1fa2;
-    color: #4a148c;
-}
-button {
-    width: 100%;
-    padding: 15px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: 0.3s;
-}
-#login-btn { background-color: #673ab7; color: white; }
-#pay-btn { background-color: #ff9800; color: white; }
-button:hover { transform: scale(1.02); opacity: 0.9; }
-.footer { margin-top: 20px; font-size: 11px; color: #999; }
